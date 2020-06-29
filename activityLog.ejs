@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Activity_Log</title>
+</head>
+<body>
+    <% var xx = ownAct; %>
+    <% var cc = coAct; %>
+    <% var jj = ownAct[0].puesto_trabajo_id_puesto; %>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/users/MOD-empleados">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> 
+      
+        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/users/projects">Projects <span class="sr-only">(current)</span></a>
+            </li>
+            <!--<li class="nav-item">
+              <a class="nav-link" href="#">Account <span class="sr-only">(current)</span></a>
+            </li>-->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Activities
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/users/activities">Send Activity</a>
+                <a class="dropdown-item" href="#">Activity Log</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+            <li class="nav-item" >
+              <a class="nav-link" style="display: none;" href="/users/Functionalities" id="functionalitiestab">Functionalities</a>
+            </li>
+          </ul>
+            <a class="nav-link" href="/users/logout">Logout</a>
+        </div>
+      </nav>
+    <div class="container form-group col-form-label-lg">
+      <h2 class="display-4">Activity Log</h2>
+    </div>
+    <hr>
+    <div class="container" style="display: none;" id="tablex">
+        <h2>Your Activities</h2>
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th style="text-align: center">Proyect</th>
+            <th style="text-align: center">Activity</th>
+            <th style="text-align: center">Functionality</th>
+            <th style="text-align: center;">Sprint</th>
+          </tr>
+        </thead>
+        <tbody>
+            <% for(var i = 0; i < ownAct.length; i++) { %>
+            <tr>
+                <td style="text-align: center"><%= ownAct[i].pseudo_nombre %></td>
+                <td style="text-align: center"><%= ownAct[i].act_realizada %></td>
+                <td style="text-align: center"><%= ownAct[i].nombre_historia %></td>
+                <td style="text-align: center;"><%= ownAct[i].cant_tiempo_act + " min"%></td>
+            </tr>
+            <% } %>
+        </tbody>
+      </table>
+      <hr>
+    </div>
+
+    <div class="container" style="display: none;" id="tablec">
+      <h2>Co-Worker Activity</h2>
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th style="text-align: center;">Proyect</th>
+            <th style="text-align: center;">Activity</th>
+            <th style="text-align: center;">Functionality</th>
+            <th style="text-align: center;">Co-Worker</th>
+            <th style="text-align: center;">Sprint</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i = 0; i < coAct.length; i++) { %>
+            <tr>
+              <td style="text-align: center;"><%= coAct[i].pseudo_nombre %></td>
+              <td style="text-align: center;"><%= coAct[i].act_realizada %></td>
+              <td style="text-align: center;"><%= coAct[i].nombre_historia %></td>
+              <td style="text-align: center;"><%= coAct[i].Nombre %></td>
+              <td style="text-align: center;"><%= coAct[i].cant_tiempo_act + " min"%></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+</body>
+  <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script>
+      $(document).ready(function(){
+        var get = "<%= jj %>";
+        console.log(get);
+        if(get == 'PT-102'){
+          $("#functionalitiestab").show();
+        }else{
+          $("#functionalitiestab").hide();
+        }
+      })
+    </script>
+      
+    <script>
+        $(document).ready(function(){
+            var get = "<%=xx %>";
+            console.log(get);
+         if(typeof get != 'undefined') {
+            $("#tablex").show();
+         } else{
+             $("#tablex").hide();
+         }
+        })
+    </script>
+
+    <script>
+      $(document).ready(function(){
+        var getCo = "<%=cc %>";
+        console.log(getCo);
+      if(typeof getCo != 'undefined'){
+        $("#tablec").show();
+      } else{
+        $("#tablec").hide();
+      }
+      })
+    </script>
+</html>
