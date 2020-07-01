@@ -73,7 +73,7 @@ app.get("/users/projects", checkNotAuthenticated, async(req, res)=>{
     try {
         if(req.user.rol === 2)
         {
-        const projects = await pool.query(`SELECT p.id_proyecto, p.pseudo_nombre, p.fecha_entrega, p.repositorio_github, p.trello, p.equipos_id_equipo, e.puesto_trabajo_id_puesto
+        const projects = await pool.query(`SELECT p.id_proyecto, p.pseudo_nombre, p.fecha_entrega, p.repositorio_github, p.trello, t.nombre_equipo, e.puesto_trabajo_id_puesto
         FROM usuario u INNER JOIN empleados e ON u.username = e.username INNER JOIN equipos t 
         ON e.equipos_id_equipo = t.id_equipo INNER JOIN proyecto_aprobado p ON t.id_equipo = p.equipos_id_equipo
         WHERE e.username = '${req.user.username}'`);
@@ -147,6 +147,17 @@ app.get("/users/logout", (req,res)=>{
     res.redirect("/users/login");
 })
 
+app.get("/users/adm_employeeAct",checkNotAuthenticated, async(req, res)=>{
+    const activities = await pool.query(`SELECT u.nombre || ' ' || u.apellido AS "Nombre", emp.id_emp, 
+    ad.act_realizada, ad.nombre_pro, ad.fecha_act, ad.cant_tiempo_act, hu.nombre_historia
+    FROM usuario u INNER JOIN empleados emp ON u.username = emp.username
+    INNER JOIN empxact ea ON emp.id_emp = ea.empleados_id_emp
+    INNER JOIN act_diarias ad ON ad.id_act = ea.act_diarias_id_act
+    INNER JOIN historia_usuario hu ON ad.historia_usuario_id_historia = hu.id_historia
+    ORDER BY emp.id_emp`);
+    res.render("adm_employeeAct", {activities: activities.rows});
+});
+
 app.get("/users/activityLog", checkNotAuthenticated, async(req, res)=>{
     try {
         if(req.user.rol === 2)
@@ -175,6 +186,104 @@ app.get("/users/activityLog", checkNotAuthenticated, async(req, res)=>{
         console.log(error.message);
     }
 });
+
+app.get("/users/adm_employees", checkNotAuthenticated, async(req, res)=>{
+    const employees = await pool.query(`SELECT emp.id_emp, u.nombre || ' ' || u.apellido AS "Nombre", pt.nombre_puesto, eq.nombre_equipo, 
+    emp.salario, tl.numero_tel, u.nombre, u.apellido
+    FROM usuario u INNER JOIN empleados emp ON u.username = emp.username
+    INNER JOIN equipos eq ON emp.equipos_id_equipo = eq.id_equipo
+    INNER JOIN puesto_trabajo pt ON emp.puesto_trabajo_id_puesto = pt.id_puesto
+    LEFT JOIN telefonos tl ON u.username = tl.usuario_username
+    WHERE u.rol = 2`);
+    const teams = await pool.query(`SELECT * FROM equipos`);
+    const jobs = await pool.query(`SELECT * FROM puesto_trabajo`);
+    const habilities = await pool.query(`SELECT u.nombre || ' ' ||  u.apellido AS "Nombre", emp.id_emp, c.nombre_hab, c.descripcion
+    FROM usuario u INNER JOIN empleados emp ON u.username = emp.username
+    INNER JOIN controlhabxemp ch ON emp.id_emp = ch.empleados_id_emp
+    INNER JOIN control_hab c ON c.id_hab = ch.control_hab_id_hab
+    ORDER BY emp.id_emp`);
+    console.log(employees.rows);
+    console.log(teams.rows);
+    res.render("adm_employees", { employees: employees.rows, teams: teams.rows, jobs: jobs.rows, habs: habilities.rows});
+})
+
+app.post("/users/adm_employees", checkNotAuthenticated, async(req, res)=>{
+    let{ emp_idh, habName, habDesc} = req.body;
+    console.log({
+        emp_idh, habName, habDesc
+    })
+    const getHab = await pool.query(`SELECT control_hab_id_hab FROM controlhabxemp WHERE empleados_id_emp = '${emp_idh}'`);
+    pool.query(`UPDATE control_hab SET nombre_hab = '${habName}', descripcion = '${habDesc}' WHERE id_hab = '${getHab.rows[0].control_hab_id_hab}'`);
+    res.redirect("adm_employees");
+})
+
+app.get("/users/adm_employeeJobs", checkNotAuthenticated, async(req,res)=>{
+    const jobs = await pool.query(`SELECT u.nombre || ' ' || u.apellido AS "Nombre", emp.id_emp, hp.fecha_asignacion, hp.fecha_resignacion, pt.nombre_puesto
+    FROM usuario u INNER JOIN empleados emp ON u.username = emp.username
+    INNER JOIN historial_puestos hp ON hp.empleados_id_emp = emp.id_emp
+    INNER JOIN puesto_trabajo pt ON pt.id_puesto = hp.id_puesto
+    ORDER BY emp.id_emp`)
+    res.render("adm_employeeJobs", { jobs: jobs.rows});
+})
+
+app.post("/formhab", checkNotAuthenticated, async(req, res)=>{
+    let{ hName, desc, emp_idx} = req.body;
+    console.log({
+        hName, desc, emp_idx
+    });
+
+    let errors = [];
+
+    if(!hName || !desc){
+        push.errors({ message: "Please add data to all fields"});
+    }
+
+    pool.query(`INSERT INTO control_hab(nombre_hab, descripcion)VALUES('${hName}', '${desc}')`);
+    const getHabId = await pool.query(`SELECT id_hab FROM control_hab WHERE nombre_hab = '${hName}'`);
+    pool.query(`INSERT INTO controlhabxemp(empleados_id_emp, control_hab_id_hab)VALUES('${emp_idx}', '${getHabId.rows[0].id_hab}')`);
+    res.redirect("/users/adm_employees");   
+})
+
+app.post("/users/adm_employees", checkNotAuthenticated, async(req, res)=>{
+    let{ eName, eLastName, job, team, emp_id} = req.body;
+    console.log({
+       eName, eLastName, job, team, emp_id
+    })
+    const getJob = await pool.query(`SELECT id_puesto FROM puesto_trabajo WHERE nombre_puesto = '${job}'`);
+    const getUsername = await pool.query(`SELECT username FROM empleados WHERE id_emp = '${emp_id}'`);
+    const getTeamId = await pool.query(`SELECT id_equipo FROM equipos WHERE nombre_equipo = '${team}'`);
+    pool.query(`UPDATE empleados SET puesto_trabajo_id_puesto = '${getJob.rows[0].id_puesto}', equipos_id_equipo = '${getTeamId.rows[0].id_equipo}'
+    WHERE id_emp = '${emp_id}'`);
+    pool.query(`UPDATE usuario SET nombre = '${eName}', apellido = '${eLastName}' WHERE username = '${getUsername.rows[0].username}'`);
+    res.redirect("adm_employees");
+})
+
+app.get("/users/adm_activity_req", checkNotAuthenticated, async(req, res)=>{
+    const requests = await pool.query(`SELECT * FROM solicitud_actividad`)
+    res.render("adm_activity_req", { requests: requests.rows});
+})
+
+app.post("/users/adm_activity_req", async(req, res)=>{
+    let{ statusx, idsolicitud, id_act, nombre_act, nombre_proyecto, cant_tiempo, id_empleado, id_historia } = req.body;
+    console.log(statusx);
+    console.log(idsolicitud);
+    pool.query(`UPDATE solicitud_actividad SET estado_solicitud = '${statusx}' WHERE id_solicitud_act = '${idsolicitud}'`);
+    pool.query(`INSERT INTO act_diarias(id_act, nombre_pro, act_realizada, historia_usuario_id_historia, cant_tiempo_act, fecha_act) VALUES($1, $2, $3, $4, $5, current_date)`,
+    [id_act, nombre_proyecto, nombre_act, id_historia, cant_tiempo], 
+    (err, results)=>{
+        if(err){
+            throw err;
+        }
+        console.log(results.rows);
+    });
+    pool.query(`INSERT INTO empxact(empleados_id_emp, act_diarias_id_act) VALUES($1, $2)`, [id_empleado, id_act], (err,results)=>{
+        if(err){
+            throw err;
+        }
+        console.log(results.rows);
+    });
+    res.redirect("adm_activity_req");
+})
 
 app.post("/users/functionalities", async(req, res)=>{
 
@@ -243,8 +352,9 @@ app.post('/users/activities', async(req, res)=>{
         res.render("activities", { user: req.user.nombre, act: activities.rows, projects: projects.rows, stories: stories.rows, errors});//+'?error=' + encodeURIComponent('tenemos errores'));
     }else{
         if(activity == 'otra'){
-            pool.query(`INSERT INTO act_diarias( id_act, nombre_pro, act_realizada, cant_tiempo_act,
-                historia_usuario_id_historia, fecha_act) VALUES($1, $2, $3, $4, $5, current_date)`, [id_activity.rows[0].id_act, projs, td1, duration, id_story.rows[0].id_historia],
+            pool.query(`INSERT INTO solicitud_actividad(id_act, nombre_proyecto, nombre_act, id_historia,
+                cant_tiempo, id_empleado, estado_solicitud, fecha_actividad) VALUES($1, $2, $3, $4, $5, $6, 'pending', current_date)`, 
+                [id_activity.rows[0].id_act, projs, td1, id_story.rows[0].id_historia, duration, emp.rows[0].id_emp],
                 (err, results)=>{
                     if(err){
                         throw err;
@@ -252,7 +362,7 @@ app.post('/users/activities', async(req, res)=>{
                     console.log(results.rows);
                     req.flash("success_msg", "Activity correctly submitted");
                     res.redirect(req.get('referer'));
-                });
+                })
 
         }else{            
             pool.query(`INSERT INTO act_diarias( id_act, nombre_pro, act_realizada, cant_tiempo_act,
@@ -264,15 +374,16 @@ app.post('/users/activities', async(req, res)=>{
                     console.log(results.rows);
                     req.flash("success_msg", "Activity correctly submitted");
                     res.redirect(req.get('referer'));
-                })
+                });
+
+                pool.query(`INSERT INTO empxact(empleados_id_emp, act_diarias_id_act) VALUES($1, $2)`, [emp.rows[0].id_emp, id_activity.rows[0].id_act], 
+                (err, results)=>{
+                    if(err){
+                        throw err;
+                    }
+                    console.log(results.rows);
+                });
         }
-        pool.query(`INSERT INTO empxact(empleados_id_emp, act_diarias_id_act) VALUES($1, $2)`, [emp.rows[0].id_emp, id_activity.rows[0].id_act], 
-            (err, results)=>{
-                if(err){
-                    throw err;
-                }
-                console.log(results.rows);
-            });
     }
     console.log({errors});
 })
@@ -363,6 +474,9 @@ app.post("/users/login", passport.authenticate("local", {
     }
     if(req.user.rol === 2){
         res.redirect("/users/MOD-empleados");
+    }
+    if(req.user.rol === 3){
+        res.redirect("/users/adm_activity_req");
     }
 });
 
