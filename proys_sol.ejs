@@ -76,7 +76,6 @@
                 <th>Descripcion</th>
                 <th>Estado Solicitud</th>
                 <th>Presupuesto</th>
-                <th>Revocar</th>
             </tr>
             <% for(var i = 0; i < projects.length; i++){%>
                 <tr>
@@ -94,12 +93,6 @@
                     </td>
                     <td class="bg-dark text-white">
                         <%= projects[i].presupuesto %>
-                    </td>
-                    <td class="bg-secondary text-white">
-                        <form action="/users/proys_sol" method="POST">
-                        <input type="hidden" id="custId" name="custId" value=<%= projects[i].id_solicitud %>>
-                        <input type="submit" name="but"  value="Revocar">
-                        </form>
                     </td>
                 </tr>
                 <% } %>
