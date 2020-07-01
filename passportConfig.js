@@ -55,6 +55,7 @@ function initialize(passport) {
       if (err) {
         return done(err);
       }
+      console.log(`Role is ${results.rows[0].rol}`);
       console.log(`ID is ${results.rows[0].username}`);
       return done(null, results.rows[0]);
     });

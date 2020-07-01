@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>adm_employees</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/users/dashboard"><%= user.charAt(0).toUpperCase() + user.slice(1) %></a>
+    <button class="navbar-toggler" aria-expanded="false" aria-controls="navbarSupportedContent" aria-label="Toggle navigation" type="button" data-target="#navbarSupportedContent" data-toggle="collapse">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Users
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/manejar_usuarios">Manage Users</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/users/register">Register New User</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/users/manejar_clientes">View Clients</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle active" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Employees
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/adm_employees">Manage Employees</a>
+            <a class="dropdown-item" href="/users/adm_employeeAct">Employee Activites</a>
+            <a class="dropdown-item" href="/users/adm_employeeJobs">Employee Job History</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Projects
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/manejar_solis">Project Requests</a>
+            <a class="dropdown-item" href="/users/ver_proyectos_aprobados">Approved Projects</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Teams
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/crear_equipo">Create Team</a>
+            <a class="dropdown-item" href="/users/ver_equipos">View Teams</a>
+          </div>
+        </li>
+        
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="/users/logout">Logout <span class="sr-only">(current)</span></a>
+          </li>
+      </ul>
+    </div>
+  </nav>
+      <div class="container form-group col-form-label-lg">
+        <h1 class="display-4">Employees</h1>
+      </div>
+      <hr>
+
+      <div class="container">
+        <table class="table table-responsive-lg table-dark table-hover">
+          <thead>
+            <tr>
+              <th style="text-align: center;">ID Employee</th>
+              <th style="text-align: center;">Employee Name</th>
+              <!-- <th style="text-align: center;">Last Name</th> -->
+              <th style="text-align: center;">Job</th>
+              <th style="text-align: center;">Team</th>
+              <th style="text-align: center;">Salary</th>
+              <th style="text-align: center;">Phone Number</th>
+              <th style="text-align: center;">Habilites</th>
+              <th style="text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var i = 0; i < employees.length; i++) { %>
+            <tr>
+              <td style="text-align: center;"><%= employees[i].id_emp %></td>
+              <td style="text-align: center;"><%= employees[i].Nombre %></td>
+              <td style="display: none;"><%= employees[i].nombre %></td>
+              <td style="display: none;"><%= employees[i].apellido %></td>
+              <!-- <td style="text-align: center;"><%= employees[i].apellido %></td> -->
+              <td style="text-align: center;"><%= employees[i].nombre_puesto %></td>
+              <td style="text-align: center;"><%= employees[i].nombre_equipo %></td>
+              <td style="text-align: center;"><%= employees[i].salario %></td>
+              <td style="text-align: center;"><%= employees[i].numero_tel%></td>
+              <input type="hidden" id="first" value="<%= employees[i].nombre %>">
+              <input type="hidden" id="last" value="<%= employees[i].apellido %>">
+              <td>
+                <form action="formhab" method="POST">
+                  <div class="button">
+                  <button type="button" id="habilitiesbtn" class="btn btn-primary badge-pill" data-toggle="modal" data-target="#habilitiesmodal">Add</button>
+                  </div>
+                  </form>
+              </td>
+              <td>
+                <form action="/users/adm_employees" method="POST">
+                <div class="buttons">
+                <button type="button" id="editbtn" class="btn btn-primary badge-pill" data-toggle="modal" data-target="#editmodal">Edit</button>
+                </div>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <hr>
+      <div class="container form-group col-form-label-lg">
+        <h1 class="display-4">Employee Habilities</h1>
+      </div>
+      <div class="container">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th style="text-align: center;">Employee ID</th>
+              <th style="text-align: center;">Employee</th>
+              <th style="text-align: center;">Hability</th>
+              <th style="text-align: center;">Description</th>
+              <th style="text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var i = 0; i < habs.length; i++){ %>
+            <tr>
+              <td style="text-align: center;"><%= habs[i].id_emp %></td>
+              <td style="text-align: center;"><%= habs[i].Nombre %></td>
+              <td style="text-align: center;"><%= habs[i].nombre_hab %> </td>
+              <td style="text-align: center;"><%= habs[i].descripcion %></td>
+              <td>
+                <form action="/users/adm_employees" method="POST">
+                  <div class="buttonx">
+                    <button type="button" id="editbtn" class="btn btn-primary badge-pill" data-toggle="modal" data-target="#edithabmodal">Edit</button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <form action="/users/edithab" method="POST">
+        <div class="modal fade" id="edithabmodal" tabindex="-1" role="dialog" aria-labelledby="ExamplemodalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Edit Employee Habilities</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            
+              <div class="modal-body">  
+                  <div class="form-group">
+                    <label>Hability Name</label>
+                    <input type="hidden" id="emp_idh" name="emp_idh" value="">
+                    <input type="text" name="habName" id="habName" class="form-control" placeholder="Hability Name">
+                  </div>
+  
+                  <div class="form-group">
+                    <label>Hability Description</label>
+                    <textarea class="form-control" name="habDesc" id="habDesc" placeholder="Hability Description" rows="6"></textarea>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                <input type="submit" id="btnsubmit" class="btn btn-primary" value="Update">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+  
+
+      <form action="formhab" method="POST">
+      <div class="modal fade" id="habilitiesmodal" tabindex="-1" role="dialog" aria-labelledby="ExamplemodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Hability</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          
+            <div class="modal-body">  
+              <div class="form-group">
+                <label>Hability Name</label>
+                <input type="hidden" id="emp_idx" name="emp_idx" value="">
+                <input type="text" name="hName" id="hName" class="form-control" placeholder="Hability Name">
+              </div>
+
+              <div class="form-group">
+                <label>Hability Description</label>
+                <textarea class="form-control" name="desc" id="desc" placeholder="Hability Description" rows="6"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+              <input type="submit" id="btnhab" class="btn btn-primary" value="Add">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+      <form action="/users/adm_employees" method="POST">
+      <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-labelledby="ExamplemodalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Employee Data</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          
+            <div class="modal-body">  
+                <div class="form-group">
+                  <label>Employee First Name</label>
+                  <input type="hidden" id="emp_id" name="emp_id" value="">
+                  <input type="text" name="eName" id="eName" class="form-control" placeholder="Employee First Name">
+                </div>
+
+                <div class="form-group">
+                  <label>Employee Last Name</label>
+                  <input type="text" name="eLastName" id="eLastName" class="form-control" placeholder="Employee Last Name">
+                </div>
+
+                <div class="form-group">
+                  <label>Job</label>
+                  <select class="form-control col-form-label-sm" id="job" name="job">
+                    <% for(var i = 0; i < jobs.length; i++) { %>
+                    <option><%= jobs[i].nombre_puesto %></option>
+                    <% } %>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Team</label>
+                  <select class="form-control col-form-label-sm" id="team" name="team">
+                    <% for(var i = 0; i < teams.length; i++) { %>
+                    <option><%= teams[i].nombre_equipo %></option>
+                    <% } %>
+                  </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+              <input type="submit" id="btnsubmit" class="btn btn-primary" value="Update">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <script src="bootstable.min.js"></script> 
+      <script src="/js/bootstrap.min.js"></script>
+
+      <script>
+        $(document).ready(function(){
+          $('.buttons').on('click' ,function(){
+            $tr = $(this).closest('tr');
+
+            var data = $tr.children("td").map(function(){
+              return $(this).text();
+            }).get();
+
+            $("#emp_id").val(data[0]);
+            $("#eName").val(data[2]);
+            $("#eLastName").val(data[3]);
+            $("#job").val(data[4]);
+            $("#team").val(data[5]);
+          });
+        });
+      </script>
+
+<script>
+  $(document).ready(function(){
+    $('.buttonx').on('click' ,function(){
+      $tr = $(this).closest('tr');
+
+      var data = $tr.children("td").map(function(){
+        return $(this).text();
+      }).get();
+
+      $("#emp_idh").val(data[0]);
+      $("#habName").val(data[2]);
+      $("#habDesc").val(data[3]);
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function(){
+    $('.button').on('click' ,function(){
+      $tr = $(this).closest('tr');
+
+      var data = $tr.children("td").map(function(){
+        return $(this).text();
+      }).get();
+      $("#emp_idx").val(data[0]);
+    });
+  });
+</script>
+
+</body>
+</html>

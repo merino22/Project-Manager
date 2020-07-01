@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <title>Asignar Miembros</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/users/dashboard"><%= user.charAt(0).toUpperCase() + user.slice(1) %></a>
+    <button class="navbar-toggler" aria-expanded="false" aria-controls="navbarSupportedContent" aria-label="Toggle navigation" type="button" data-target="#navbarSupportedContent" data-toggle="collapse">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Users
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/manejar_usuarios">Manage Users</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/users/register">Register New User</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/users/manejar_clientes">View Clients</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Employees
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/adm_employees">Manage Employees</a>
+            <a class="dropdown-item" href="/users/adm_employeeAct">Employee Activites</a>
+            <a class="dropdown-item" href="/users/adm_employeeJobs">Employee Job History</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Projects
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/manejar_solis">Project Requests</a>
+            <a class="dropdown-item" href="/users/ver_proyectos_aprobados">Approved Projects</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle active" id="navbarDropdown" role="button" aria-expanded="false" aria-haspopup="true" href="#" data-toggle="dropdown">
+            Teams
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/users/crear_equipo">Create Team</a>
+            <a class="dropdown-item" href="/users/ver_equipos">View Teams</a>
+          </div>
+        </li>
+        
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="/users/logout">Logout <span class="sr-only">(current)</span></a>
+          </li>
+      </ul>
+    </div>
+  </nav>
+    <center>
+        <div class="jumbotron">
+            <h1 class="display-5">Asignar Miembros</h1>
+            <strong class="text-success">Asigna miembros a un equipo</strong>
+        </div>
+    <ul>
+    <% if(messages.success_msg) { %>
+        <li><%= messages.success_msg %></li>
+        <% } %>
+    </ul>
+
+    <ul>
+        <% if(messages.error ){ %>
+        <li><%= messages.error %></li>
+       <% } %>
+    </ul>
+
+    <form action="/users/asignar_miembros" method="POST">
+        <div><label>Escoge un miembro para este proyecto</label></div>
+        <div>
+            <select name="miembros" id="miembros">
+                <% for(var i = 0; i < miembros.length; i++){%>
+                <option value=<%= miembros[i].id_emp %>>
+                    <%= miembros[i].username %>
+                </option>
+                <% } %>
+            </select>
+        </div>
+    <div>
+        <input type="submit" value="Asignar Miembro" />
+    </div>
+    
+    </form>
+</center>
+</body>
+</html>

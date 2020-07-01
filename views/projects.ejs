@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Projects_dashboard</title>
+</head>
+<body>
+    <% if(typeof projects[0] != 'undefined') { %>
+      <% var xx = projects[0].puesto_trabajo_id_puesto; %>
+    <% } %>
+  
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/users/MOD-empleados"><%= user.charAt(0).toUpperCase() + user.slice(1) %></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> 
+      
+        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Projects<span class="sr-only">(current)</span></a>
+            </li>
+            <!--<li class="nav-item">
+              <a class="nav-link" href="#">Account <span class="sr-only">(current)</span></a>
+            </li>-->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Activities
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/users/activities">Send Activity</a>
+                <a class="dropdown-item" href="/users/activityLog">Activity Log</a>
+              </div>
+            </li>
+            <li class="nav-item" >
+              <a class="nav-link" style="display: none;" href="/users/Functionalities" id="functionalitiestab">Functionalities</a>
+            </li>
+          </ul>
+            <a class="nav-link" href="/users/logout">Logout</a>
+        </div>
+      </nav>
+    <div class="container form-group col-form-label-lg">
+      <h1 class="display-4">Your Projects</h1>
+      <hr>
+    </div>
+    <div class="container">
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th style="text-align: center">ID</th>
+            <th style="text-align: center">Name</th>
+            <th style="text-align: center">Due Date</th>
+            <th style="text-align: center">Github Repository</th>
+            <th style="text-align: center">Trello</th>
+            <th style="text-align: center">Team</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i =0; i <projects.length; i++) { %>
+            <tr>
+              <td style="text-align: center">
+                <%= projects[i].id_proyecto %>
+              </td>
+              <td style="text-align: center">
+                <%= projects[i].pseudo_nombre %>
+              </td>
+              <td style="text-align: center">
+                <%= projects[i].fecha_entrega %>
+              </td>
+              <td style="text-align: center">
+                <a href=<%= projects[i].repositorio_github %>><%= projects[i].repositorio_github %></a>
+              </td>
+              <td style="text-align: center">
+                <a href=<%= projects[i].trello %>><%= projects[i].trello %></a>
+              </td>
+              <td style="text-align: center">
+                <%= projects[i].nombre_equipo %>
+              </td>
+            </tr>
+            <% } %>
+        </tbody>
+      </table>
+    </div>
+   <!-- <ul class="list-group">
+      <% for(var i =0; i <projects.length; i++) { %>
+        <li class="list-group-item">
+          <span>ID Proyecto</span><br><%= projects[i].id_proyecto %>
+          <br>
+          <span>Estado Proyecto</span><br><%= projects[i].estado_proyecto %>
+        </li>
+        <% } %>
+    </ul>-->
+</body>
+  <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+      $(document).ready(function(){
+        var get = "<%= xx %>";
+        console.log(get);
+        if(get == 'PT-102'){
+          $("#functionalitiestab").show();
+        }else{
+          $("#functionalitiestab").hide();
+        }
+      })
+    </script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>-->
+    
+</html>
